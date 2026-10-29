@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { DemoBadge, PageHeader } from "@/components/app/ui-bits";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { BudgetProvider, useBudgets } from "@/lib/budget/store";
 import { ALL_MONTHS, CATEGORIES, CENTRES, DEPARTMENTS, MONTHS, centreDept, centreLabel, type BudgetLine } from "@/lib/budget/model";
 import { Btn, Select } from "@/components/budget/ui";
@@ -37,6 +38,7 @@ function BudgetsPage() {
   const [dept, setDept] = useState("all");
   const [centre, setCentre] = useState("all");
   const [cat, setCat] = useState("all");
+  const [creating, setCreating] = useState(false);
 
   const budgetOf = useMemo(() => new Map(budgets.map((b) => [b.id, b])), [budgets]);
   const centreOf = (l: BudgetLine) => centreLabel(budgetOf.get(l.budgetId)?.centre ?? "");
@@ -52,19 +54,23 @@ function BudgetsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title="Budgets & Prévisions"
-        subtitle="Élaboration budgétaire, suivi du réalisé et analyse des écarts"
+        subtitle="Planification budgétaire, suivi des réalisations et analyse des écarts."
         actions={
           <div className="flex items-center gap-3">
             <DemoBadge />
             <Btn variant="ghost" onClick={reset} title="Restaurer les données de démonstration"><RotateCcw className="h-4 w-4" />Réinitialiser</Btn>
+            <Btn onClick={() => setCreating(true)}><Plus className="h-4 w-4" />Créer un budget</Btn>
           </div>
         }
       />
 
-      <div className="card-elevated grid gap-3 p-4 sm:grid-cols-3 xl:grid-cols-5">
+      <div className="card-elevated grid gap-3 p-4 sm:grid-cols-3 xl:grid-cols-6">
+        <Select label="Société" value="atlas" onChange={() => {}}>
+          <option value="atlas">Société Atlas SA</option>
+        </Select>
         <Select label="Exercice" value={year} onChange={(e) => setYear(Number(e.target.value))}>
           {years.map((y) => <option key={y} value={y}>{y}</option>)}
         </Select>
@@ -107,6 +113,54 @@ function BudgetsPage() {
       <p className="text-center text-xs text-muted-foreground">
         Données de démonstration fictives. Vos modifications sont conservées uniquement dans ce navigateur.
       </p>
+
+      {creating && <CreateBudgetDialog year={year} onClose={() => setCreating(false)} />}
     </div>
+  );
+}
+
+function CreateBudgetDialog({ year, onClose }: { year: number; onClose: () => void }) {
+  const { budgets, addBudget } = useBudgets();
+  const [y, setY] = useState(year);
+  const [centre, setCentre] = useState(CENTRES[0]!.id);
+  const [err, setErr] = useState("");
+  const years = [...new Set([...budgets.map((b) => b.year), 2026, 2027])].sort();
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Créer un budget</DialogTitle>
+          <DialogDescription>Un budget regroupe les lignes budgétaires d'un centre de coûts pour un exercice.</DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (budgets.some((b) => b.year === y && b.centre === centre)) {
+              setErr("Un budget existe déjà pour ce centre et cet exercice.");
+              return;
+            }
+            addBudget({ year: y, centre });
+            onClose();
+          }}
+        >
+          <div className="grid grid-cols-2 gap-3">
+            <Select label="Exercice" value={y} onChange={(e) => setY(Number(e.target.value))}>
+              {years.map((v) => <option key={v} value={v}>{v}</option>)}
+            </Select>
+            <Select label="Centre de coûts" value={centre} onChange={(e) => setCentre(e.target.value)}>
+              {CENTRES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </Select>
+          </div>
+          {err && <p className="text-xs text-destructive">{err}</p>}
+          <p className="text-xs text-muted-foreground">Ajoutez ensuite les lignes budgétaires dans l'onglet « Lignes budgétaires ».</p>
+          <div className="flex justify-end gap-2 pt-2">
+            <Btn type="button" variant="ghost" onClick={onClose}>Annuler</Btn>
+            <Btn type="submit">Créer</Btn>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
