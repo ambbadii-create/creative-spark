@@ -72,11 +72,11 @@ export type Movement = {
   type: MovementType;
   productId: string;
   warehouseId: string;
-  targetWarehouseId?: string; // transferts uniquement
+  targetWarehouseId?: string | undefined; // transferts uniquement
   quantity: number;
   unitCost: number;
-  document?: string;
-  user?: string;
+  document?: string | undefined;
+  user?: string | undefined;
 };
 export const movementValue = (m: Movement) => m.quantity * m.unitCost;
 
