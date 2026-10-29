@@ -166,9 +166,9 @@ export function OverviewTab({ lines, months, centreOf }: { lines: BudgetLine[]; 
                 {byCat.map((r) => (
                   <tr key={r.id} className={trow}>
                     <td className="py-2 pr-2 text-xs font-medium text-foreground">{r.label}</td>
-                    <td className="py-2 pr-2 text-right text-xs text-muted-foreground">{fmt(r.budget)}</td>
-                    <td className="py-2 pr-2 text-right text-xs text-foreground">{fmt(r.actual)}</td>
-                    <td className={cn("py-2 pr-2 text-right text-xs font-semibold", r.nature === "favorable" ? "text-success" : r.nature === "defavorable" ? "text-destructive" : "text-muted-foreground")}>{r.ecart > 0 ? "+" : ""}{fmt(r.ecart)}</td>
+                    <td className="py-2 pr-2 text-right text-xs whitespace-nowrap text-muted-foreground">{fmtM(r.budget)}</td>
+                    <td className="py-2 pr-2 text-right text-xs whitespace-nowrap text-foreground">{fmtM(r.actual)}</td>
+                    <td className={cn("py-2 pr-2 text-right text-xs whitespace-nowrap font-semibold", r.nature === "favorable" ? "text-success" : r.nature === "defavorable" ? "text-destructive" : "text-muted-foreground")}>{r.ecart > 0 ? "+" : ""}{fmtM(r.ecart)}</td>
                     <td className="py-2 text-right text-xs text-foreground">{r.taux !== null && r.taux > 0 ? "+" : ""}{pct(r.taux)}</td>
                   </tr>
                 ))}
@@ -195,9 +195,9 @@ export function OverviewTab({ lines, months, centreOf }: { lines: BudgetLine[]; 
                 {centreRows.map((r) => (
                   <tr key={r.id} className={trow}>
                     <td className="py-2 pr-2 text-xs font-medium text-foreground">{r.label}</td>
-                    <td className="py-2 pr-2 text-right text-xs text-muted-foreground">{fmt(r.budget)}</td>
-                    <td className="py-2 pr-2 text-right text-xs text-foreground">{fmt(r.actual)}</td>
-                    <td className={cn("py-2 pr-2 text-right text-xs font-semibold", r.nature === "favorable" ? "text-success" : r.nature === "defavorable" ? "text-destructive" : "text-muted-foreground")}>{r.ecart > 0 ? "+" : ""}{fmt(r.ecart)}</td>
+                    <td className="py-2 pr-2 text-right text-xs whitespace-nowrap text-muted-foreground">{fmtM(r.budget)}</td>
+                    <td className="py-2 pr-2 text-right text-xs whitespace-nowrap text-foreground">{fmtM(r.actual)}</td>
+                    <td className={cn("py-2 pr-2 text-right text-xs whitespace-nowrap font-semibold", r.nature === "favorable" ? "text-success" : r.nature === "defavorable" ? "text-destructive" : "text-muted-foreground")}>{r.ecart > 0 ? "+" : ""}{fmtM(r.ecart)}</td>
                     <td className="py-2 text-right text-xs text-foreground">{pct(r.taux)}</td>
                   </tr>
                 ))}
