@@ -15,7 +15,7 @@ const tip = { contentStyle: { borderRadius: 10, border: "1px solid var(--border)
 const mAxis = (v: number) => `${(v / 1e6).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} M`;
 const DONUT = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
-function Kpi({ icon: Icon, label, value, sub, tone }: { icon: LucideIcon; label: string; value: string; sub?: ReactNode; tone?: "good" | "bad" }) {
+function Kpi({ icon: Icon, label, value, sub, tone }: { icon: LucideIcon; label: string; value: string; sub?: ReactNode; tone?: "good" | "bad" | undefined }) {
   return (
     <div className="card-elevated flex items-start gap-3 p-4">
       <span className="rounded-lg bg-accent p-2 text-accent-foreground"><Icon className="h-4 w-4" /></span>
